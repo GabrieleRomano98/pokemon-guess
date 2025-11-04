@@ -1,0 +1,11 @@
+# Google Cloud App Engine configuration for Node.js
+runtime: nodejs18
+
+env_variables:
+  NODE_ENV: "production"
+  SESSION_SECRET: "pokemon-game-secure-session-key-2024"
+
+# Automatic scaling
+automatic_scaling:
+  min_instances: 0
+  max_instances: 1

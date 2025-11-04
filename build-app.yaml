@@ -1,0 +1,31 @@
+# Google Cloud App Engine configuration for Pokemon Guess Game
+runtime: nodejs18
+
+env_variables:
+  NODE_ENV: "production"
+  SESSION_SECRET: "pokemon-game-secure-session-key-2024"
+
+# Automatic scaling
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+
+# Static file handlers
+handlers:
+  # API routes
+  - url: /game/.*
+    script: auto
+
+  # Static assets
+  - url: /static
+    static_dir: static
+    
+  # Other static files  
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|svg|json|txt))$
+    static_files: \1
+    upload: .*\.(js|css|png|jpg|jpeg|gif|ico|svg|json|txt)$
+
+  # React Router - serve index.html for all other routes
+  - url: /.*
+    static_files: index.html
+    upload: index.html

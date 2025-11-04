@@ -1,0 +1,31 @@
+steps:
+  # Install dependencies for React app
+  - name: 'node:18'
+    entrypoint: 'npm'
+    args: ['install']
+
+  # Build React application
+  - name: 'node:18'
+    entrypoint: 'npm'
+    args: ['run', 'build']
+
+  # Copy server files and create production structure
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Copy server files to build directory
+        cp server/server.js build/
+        cp server/package.json build/
+        cp build-app.yaml build/app.yaml
+        
+        # Install production dependencies in build folder
+        cd build
+        npm install --only=production
+
+  # Deploy to App Engine
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['app', 'deploy', 'build/app.yaml']
+
+timeout: '1200s'
