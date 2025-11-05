@@ -1,5 +1,5 @@
 # Google Cloud App Engine configuration for Pokemon Guess Game
-runtime: nodejs18
+runtime: nodejs20
 
 env_variables:
   NODE_ENV: "production"
