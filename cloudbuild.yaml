@@ -26,6 +26,11 @@ steps:
 
   # Deploy to App Engine
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['app', 'deploy', 'build/app.yaml']
+    args: ['app', 'deploy', 'build/app.yaml', '--quiet']
+
+# Logging configuration to fix the service account error
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+  logging: CLOUD_LOGGING_ONLY
 
 timeout: '1200s'
