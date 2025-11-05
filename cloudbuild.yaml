@@ -9,7 +9,7 @@ steps:
     entrypoint: 'npm'
     args: ['run', 'build']
 
-  # Copy server files and create production structure
+  # Copy server files to build directory
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -19,8 +19,13 @@ steps:
         cp server/server.js build/
         cp server/package.json build/
         cp build-app.yaml build/app.yaml
-        
-        # Install production dependencies in build folder
+
+  # Install production dependencies in build folder
+  - name: 'node:18'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
         cd build
         npm install --only=production
 
