@@ -25,8 +25,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: isProduction,
-    maxAge: 24 * 60 * 60 * 1000
+    secure: false, // Set to false for now to debug session issues
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: 'lax'
   }
 }));
 
@@ -45,6 +47,9 @@ app.post('/api/game/create', (req, res) => {
     createdAt: new Date()
   };
 
+  console.log('CREATE GAME - Session ID:', req.session.id);
+  console.log('CREATE GAME - Game Code:', gameCode);
+
   games.forEach((game, code) => {
     if(game.host !== req.session.id && game.createdAt > Date.now() - 24 * 60 * 60 * 1000) {
       games.delete(code);
@@ -53,6 +58,8 @@ app.post('/api/game/create', (req, res) => {
   games.set(gameCode, gameData);
   req.session.gameCode = gameCode;
   req.session.isHost = true;
+  
+  console.log('CREATE GAME - Session after setting:', req.session);
   
   res.json({ 
     success: true, 
@@ -136,13 +143,29 @@ app.get('/api/game/selected', (req, res) => {
 });
 
 app.put('/api/game/selected/:selected', (req, res) => {
+  // Debug logging
+  console.log('PUT /api/game/selected - Session ID:', req.session.id);
+  console.log('PUT /api/game/selected - Game Code:', req.session.gameCode);
+  console.log('PUT /api/game/selected - Is Host:', req.session.isHost);
+  console.log('PUT /api/game/selected - Selected:', req.params.selected);
+  
+  if (!req.session.gameCode) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'No game code in session' 
+    });
+  }
+  
   const game = games.get(req.session.gameCode);
   if (!game) {
+    console.log('Game not found for code:', req.session.gameCode);
+    console.log('Available games:', Array.from(games.keys()));
     return res.status(404).json({ 
       success: false, 
       message: 'Game not found' 
     });
   }
+  
   if (req.session.isHost) {
     game.selectedHost = req.params.selected;
   } else {
