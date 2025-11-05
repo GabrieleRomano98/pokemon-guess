@@ -36,7 +36,7 @@ function generateGameCode() {
   return Math.random().toString(36).substr(2, 5).toUpperCase();
 }
 
-app.post('/game/create', (req, res) => {
+app.post('/api/game/create', (req, res) => {
   const gameCode = generateGameCode();
   const gameData = {
     code: gameCode,
@@ -61,7 +61,7 @@ app.post('/game/create', (req, res) => {
   });
 });
 
-app.post('/game/join/:code', (req, res) => {
+app.post('/api/game/join/:code', (req, res) => {
   const gameCode = req.params.code.toUpperCase();
   const game = games.get(gameCode);
   
@@ -102,7 +102,7 @@ app.post('/game/join/:code', (req, res) => {
   });
 });
 
-app.get('/game/check/:code', (req, res) => {
+app.get('/api/game/check/:code', (req, res) => {
   const gameCode = req.params.code.toUpperCase();
   const game = games.get(gameCode);
   
@@ -121,7 +121,7 @@ app.get('/game/check/:code', (req, res) => {
   });
 });
 
-app.get('/game/selected', (req, res) => {
+app.get('/api/game/selected', (req, res) => {
   const game = games.get(req.session.gameCode);
   if (!game) {
     return res.status(404).json({ 
@@ -135,7 +135,7 @@ app.get('/game/selected', (req, res) => {
   });
 });
 
-app.put('/game/selected/:selected', (req, res) => {
+app.put('/api/game/selected/:selected', (req, res) => {
   const game = games.get(req.session.gameCode);
   if (!game) {
     return res.status(404).json({ 
@@ -156,7 +156,7 @@ app.put('/game/selected/:selected', (req, res) => {
   });
 });
 
-app.delete('/game/selected', (req, res) => {
+app.delete('/api/game/selected', (req, res) => {
   const game = games.get(req.session.gameCode);
   if (!game) {
     return res.status(404).json({ 
